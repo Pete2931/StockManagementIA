@@ -10,7 +10,7 @@ public class Tyre {
 
 	public int width;
 	
-	int alert_value;
+	private int alert_value;
 
 	public Tyre left;
 
@@ -27,8 +27,16 @@ public class Tyre {
 
 		width = widthIn;
 		
-		alert_value = aler_valueIn;
+		setAlert_value(aler_valueIn);
 
+	}
+
+	public int getAlert_value() {
+		return alert_value;
+	}
+
+	public void setAlert_value(int alert_value) {
+		this.alert_value = alert_value;
 	}
 
 }

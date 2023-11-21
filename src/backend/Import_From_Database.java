@@ -207,7 +207,7 @@ public class Import_From_Database {
 				newAcc.username = username;
 				newAcc.password = password;
 				newAcc.permission = permission;
-				newAcc.email = email;
+				newAcc.setEmail(email);
 				
 				if (Main.accountHead == null) {
 

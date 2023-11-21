@@ -374,7 +374,8 @@ public class Operations {
 
 			searchTyreCode(Main.tyreHead, product_code).total = searchTyreCode(Main.tyreHead, product_code).total
 					- number;
-
+			
+			
 			while (temp != null) {
 
 				if (temp.getBin_number().equals(bin)) {
@@ -545,7 +546,7 @@ public class Operations {
 
 			adding.permission = permission;
 
-			adding.email = email;
+			adding.setEmail(email);
 			
 			Main.accountTail.next = adding;
 			
@@ -573,7 +574,7 @@ public class Operations {
 
 				if (username.equals(temp.username)) {
 
-					temp.email = email;
+					temp.setEmail(email);
 					
 					System.out.println("Email for " + username + " updated.");
 					
@@ -615,6 +616,51 @@ public class Operations {
 		
 		BinarySearchTree.addTyre(Main.tyreHead, add);
 		
+	}
+	
+	public static int countAccounts(Account head) {
+		
+		int i = 0;
+
+		// Running through the entire linked list
+		while (true) {
+			
+			i = i+1;
+
+			// Checking if the node has a pointer to another node
+			if (head.next != null) {
+
+				// If there is, set the temp1 as the next node
+				head = head.next;
+
+			} else {
+				// If there is not, the while loop is broken
+				break;
+			}
+
+		}
+		
+		return i;
+
+	}
+	
+	public static Account searchAccount(Account head, String username) {
+
+		if (head != null) {
+
+			if (head.username.equals(username)) {
+
+				return head;
+
+			} else {
+
+				return searchAccount(head.next, username);
+			}
+
+		}
+
+		return null;
+
 	}
 
 }

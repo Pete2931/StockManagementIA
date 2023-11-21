@@ -10,6 +10,7 @@ import backend.Main;
 import backend.Tyre;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
@@ -18,8 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class MainMenu extends JFrame {
-	
-	
+
 	private JPanel contentPane;
 
 	/**
@@ -54,10 +54,10 @@ public class MainMenu extends JFrame {
 		JButton stockManagementBtn = new JButton("");
 		stockManagementBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 				setVisible(false);
 				dispose();
-				
+
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
@@ -83,6 +83,38 @@ public class MainMenu extends JFrame {
 		contentPane.add(lblNewLabel);
 
 		JButton mailManagementBtn = new JButton("");
+		mailManagementBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				if (Main.permission.equals("admin")) {
+
+					setVisible(false);
+					dispose();
+
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								MailAlertSystemMenu frame = new MailAlertSystemMenu();
+								frame.setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+
+				} else {
+
+					try {
+						NoPermission dialog = new NoPermission();
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+
+		});
 		mailManagementBtn
 				.setIcon(new ImageIcon("C:\\Users\\Pete\\OneDrive\\Desktop\\Pete\\Notion Icons\\mail_120x120.png"));
 		mailManagementBtn.setBounds(423, 208, 120, 120);
@@ -98,6 +130,33 @@ public class MainMenu extends JFrame {
 		accountManagementBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
+				if (Main.permission.equals("admin")) {
+					
+					setVisible(false);
+					dispose();
+					
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								AccountManagementMenuAdmin frame = new AccountManagementMenuAdmin();
+								frame.setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+
+				}else {
+					
+					try {
+						NoPermission dialog = new NoPermission();
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					
+				}
 			}
 		});
 		accountManagementBtn.setIcon(

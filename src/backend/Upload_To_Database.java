@@ -14,13 +14,13 @@ public class Upload_To_Database {
 
 		if (head != null) {
 
-			if (head.total <= head.alert_value) {
+			if (head.total <= head.getAlert_value()) {
 				
 				while(tempAcc != null) {
 					
-					if (tempAcc.permission.equals("admin")) {
+					if (tempAcc.permission.equals("admin") && tempAcc.getEmail() != null && !tempAcc.getEmail().trim().isEmpty()) {
 						
-						Mail.sendEmailTo(tempAcc.email, head.product_code, head.total);
+						Mail.sendEmailTo(tempAcc.getEmail(), head.product_code, head.total);
 						
 					}
 					
@@ -43,7 +43,7 @@ public class Upload_To_Database {
 
 				pstmt1.setInt(4, head.width);
 
-				pstmt1.setInt(5, head.alert_value);
+				pstmt1.setInt(5, head.getAlert_value());
 
 				pstmt1.execute();
 
@@ -162,7 +162,7 @@ public class Upload_To_Database {
 
 				pstmt1.setString(3, head.permission);
 				
-				pstmt1.setString(4, head.email);
+				pstmt1.setString(4, head.getEmail());
 
 				pstmt1.execute();
 

@@ -29,6 +29,8 @@ public class Main {
 	public static Tyre currentSelection;
 	
 	public static Bin selectedBin;
+	
+	public static Account selectedAccount;
 
 	public static void main(String[] args) throws SQLException, NoSuchAlgorithmException {
 		

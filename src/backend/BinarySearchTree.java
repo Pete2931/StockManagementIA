@@ -20,7 +20,7 @@ public class BinarySearchTree {
 
 				n.left = k;
 
-				return true;
+				return true; 
 
 			} else if (k.product_code.compareTo(n.product_code) > 0) {
 

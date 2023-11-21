@@ -100,6 +100,9 @@ public class AddTakeOutTyresWindow extends JFrame implements Runnable {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 43, 946, 519);
 		contentPane.add(scrollPane);
+		
+		clearTable();
+		makeTable();
 
 		table = new JTable();
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

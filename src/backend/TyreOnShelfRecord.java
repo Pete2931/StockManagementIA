@@ -2,7 +2,7 @@ package backend;
 
 public class TyreOnShelfRecord{
 	
-	int id;
+	public int id;
 	
 	public String product_code;
 	
