@@ -44,8 +44,7 @@ public class Mail {
 			message.setSubject(Tyre + " is running out of stock!");
 			
 			//Writing the message in the email (TIP: \n is starting a new line)
-			message.setText("Dear whom it may concern," + "\n\n" + Tyre + " is running out of stock. There are only " + tyresLeft + " tyres left." + "\n\n Sincerely," 
-					+ "\n Stock Management Team");
+			message.setText("Dear whom it may concern," + "\n\n" + Tyre + " is running out of stock. There are only " + tyresLeft + " tyres left." + "\n\n Sincerely," + "\n Stock Management Team");
 
 			Transport.send(message);
 

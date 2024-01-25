@@ -8,7 +8,7 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-//learned encrytion from this website https://www.baeldung.com/java-aes-encryption-decryption
+
 public class AES {
 	
 	private static SecretKeySpec secretKey;
