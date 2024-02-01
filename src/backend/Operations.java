@@ -135,7 +135,6 @@ public class Operations {
 							System.out.println("Created a new record");
 
 						}
-					break;
 						
 					} else {
 
