@@ -18,6 +18,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.DefaultTableModel;
 
+import backend.Import_From_Database;
 import backend.Main;
 import backend.Operations;
 import backend.Tyre;
@@ -30,12 +31,14 @@ import java.awt.event.ActionListener;
 import javax.swing.SwingConstants;
 
 public class stockManagementMenu extends JFrame {
+	
+	static int trackingNum = 0;
 
 	// To keep track of the 2D array that is used to display the table
-	static Object[][] table10 = new Object[Operations.countAllTyres(Main.tyreHead)][4];
+		static Object[][] table10 = new Object[Operations.countAllTyres(Main.tyreHead)][4];
 
 	// A method to turn the Tyre Binary Search Tree into a 2D array
-	public static void tableTyre(Tyre n, int trackingNum) {
+	public static void tableTyre(Tyre n) {
 
 		if (n != null) {
 
@@ -46,8 +49,8 @@ public class stockManagementMenu extends JFrame {
 
 			trackingNum = trackingNum + 1;
 
-			tableTyre(n.left, trackingNum);
-			tableTyre(n.right, trackingNum);
+			tableTyre(n.left);
+			tableTyre(n.right);
 
 		}
 	}
@@ -106,10 +109,12 @@ public class stockManagementMenu extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		table10 = new Object[Operations.countAllTyres(Main.tyreHead)][4];
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					tableTyre(Main.tyreHead, 0);
+					trackingNum = 0;
+					tableTyre(Main.tyreHead);
 					stockManagementMenu frame = new stockManagementMenu();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -123,6 +128,9 @@ public class stockManagementMenu extends JFrame {
 	 * Create the frame.
 	 */
 	public stockManagementMenu() {
+		
+		//used to stop making the tables funky
+		Main.tyreCount = 0;
 
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -138,7 +146,8 @@ public class stockManagementMenu extends JFrame {
 		contentPane.add(scrollPane);
 
 		// Turn the binary search tree into 2D Array so I can display it as a table
-		tableTyre(Main.tyreHead, 0);
+		trackingNum = 0;
+		tableTyre(Main.tyreHead);
 
 		table = new JTable();
 		table.setRowSelectionAllowed(false);
@@ -176,6 +185,8 @@ public class stockManagementMenu extends JFrame {
 					Upload_To_Database.uploadTyres(Main.tyreHead);
 					Upload_To_Database.uploadBins(Main.binHead);
 					Upload_To_Database.uploadTyresOnShelves(Main.recordHead);
+					Main.recordHead = null;
+					Import_From_Database.importTyresOnShelves();
 					Upload_To_Database.uploadAccounts(Main.accountHead);
 				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -221,32 +232,46 @@ public class stockManagementMenu extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				if (Main.permission.equals("admin")) {
-					// The method that I am using in order to know if a cell is selected and where
-					// Learnt from
-					// https://stackoverflow.com/questions/29345792/java-jtable-getting-the-data-of-the-selected-row
-					String selectedCellValue = (String) table.getValueAt(table.getSelectedRow(), 0);
 
-					// current Selection is used to keep track of the selection made in this window
-					// and to carry it on to the next window
-					Main.currentSelection = Operations.searchTyreCode(Main.tyreHead, selectedCellValue);
+					if (table.getSelectedRow() != -1) {
+						// The method that I am using in order to know if a cell is selected and where
+						// Learnt from
+						// https://stackoverflow.com/questions/29345792/java-jtable-getting-the-data-of-the-selected-row
+						String selectedCellValue = (String) table.getValueAt(table.getSelectedRow(), 0);
 
-					setVisible(false);
-					dispose();
+						// current Selection is used to keep track of the selection made in this window
+						// and to carry it on to the next window
+						Main.currentSelection = Operations.searchTyreCode(Main.tyreHead, selectedCellValue);
 
-					// Launch the next window
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							try {
-								ChoosingAddingOrTakingAwayOrEditing frame = new ChoosingAddingOrTakingAwayOrEditing();
-								frame.setVisible(true);
-							} catch (Exception e) {
-								e.printStackTrace();
+						setVisible(false);
+						dispose();
+
+						// Launch the next window
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									ChoosingAddingOrTakingAwayOrEditing frame = new ChoosingAddingOrTakingAwayOrEditing();
+									frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
 							}
+						});
+						
+					}else {
+						
+						try {
+							NotSelectedRow dialog = new NotSelectedRow();
+							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							dialog.setVisible(true);
+						} catch (Exception e1) {
+							e1.printStackTrace();
 						}
-					});
-
-				}else {
+						
+					}
 					
+				} else {
+
 					try {
 						NoPermission dialog = new NoPermission();
 						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -254,11 +279,56 @@ public class stockManagementMenu extends JFrame {
 					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
-					
+
 				}
 			}
 		});
 		btnNewButton_1.setBounds(669, 11, 89, 23);
 		contentPane.add(btnNewButton_1);
+
+		JButton btnNewButton_1_1 = new JButton("Back");
+		btnNewButton_1_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				setVisible(false);
+				dispose();
+
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							MainMenu frame = new MainMenu();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+
+			}
+		});
+		btnNewButton_1_1.setBounds(10, 11, 89, 23);
+		contentPane.add(btnNewButton_1_1);
+		
+		JButton btnNewButton_1_2 = new JButton("Add New Tyre");
+		btnNewButton_1_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				setVisible(false);
+				dispose();
+				
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							AddNewTypeOfTyre frame = new AddNewTypeOfTyre();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
+		btnNewButton_1_2.setBounds(538, 11, 121, 23);
+		contentPane.add(btnNewButton_1_2);
 	}
 }

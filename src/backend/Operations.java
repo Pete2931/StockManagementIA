@@ -3,12 +3,15 @@ package backend;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Operations {
 
-	public static void addTyreToShelf(String product_code, int amount) {
+	public static int addTyreToShelf(String product_code, int amount) {
 
 		if (Main.permission.equals("admin")) {
+
+			Bin smallestBin = null;
 
 			Bin tempBin = new Bin();
 
@@ -16,13 +19,15 @@ public class Operations {
 
 			Tyre actualProduct = searchTyreCode(Main.tyreHead, product_code);
 
-			boolean updatedRecord;
-			
+			boolean updatedRecord = false;
+
 			actualProduct.total = actualProduct.total + amount;
 
 			// The loop runs one stage of the bin-packing algorithm every time it completes
 			// a loop
 			for (int i = 0; i < amount; i++) {
+
+				smallestBin = null;
 
 				System.out.println("Runs " + (i + 1) + " stage");
 
@@ -68,9 +73,23 @@ public class Operations {
 
 						bin = tempBin.bin;
 
+						smallestBin = tempBin;
+
 					}
 
 					tempBin = tempBin.next;
+
+				}
+
+				// If there is not enough space left in any bin.
+				if (smallestBin == null) {
+
+					System.out.println("There is not enough space left in any shelves anymore. There are "
+							+ (amount - (i)) + "tyres left over.");
+					
+					actualProduct.total = actualProduct.total - (amount - i);
+
+					return amount - (i);
 
 				}
 
@@ -78,79 +97,65 @@ public class Operations {
 
 				tempBin = Main.binHead;
 
-				// Finding the bin
-				while (tempBin != null && updatedRecord == false) {
+				smallestBin.length_left = smallestBin.length_left - actualProduct.width;
 
-					System.out.println("2");
+				// Running through the Records of tyres on shelves
+				while (tempRec != null && updatedRecord == false) {
 
-					if (tempBin.shelf == shelf && tempBin.row == row && tempBin.bin == bin) {
+					System.out.println("3");
 
-						// Reducing the length left in the bin in order to fit in the new tyre
-						tempBin.length_left = tempBin.length_left - actualProduct.width;
+					// If there is an existing record, add 1 to the total tyres on that shelf
+					if (tempRec.getBin_number().equals(shelf + "-" + row + "-" + bin)
+							&& tempRec.product_code.equals(product_code)) {
 
-						System.out.println("Found BIn");
-
-						// Running through the Records of tyres on shelves
-						while (tempRec != null && updatedRecord == false) {
-
-							System.out.println("3");
-
-							// If there is an existing record, add 1 to the total tyres on that shelf
-							if (tempRec.getBin_number().equals(shelf + "-" + row + "-" + bin)
-									&& tempRec.product_code.equals(product_code)) {
-
-								tempRec.setTotal(tempRec.getTotal() + 1);
-
-								// Indicating that the record has been updated
-								updatedRecord = true;
-
-								System.out.println("Updated a record");
-
-							}
-
-							tempRec = tempRec.next;
-
-						}
-
-						// If the record was not updated
-						if (updatedRecord == false) {
-
-							System.out.println("4");
-
-							// Creating a new record
-							TyreOnShelfRecord adding = new TyreOnShelfRecord();
-
-							adding.setBin_number(shelf + "-" + row + "-" + bin);
-
-							adding.product_code = product_code;
-
-							adding.setTotal(1);
-
-							Main.recordTail.next = adding;
-
-							Main.recordTail = adding;
-
-							updatedRecord = true;
-
-							System.out.println("Created a new record");
-
-						}
+						tempRec.setTotal(tempRec.getTotal() + 1);
 						
-					} else {
+						System.out.println("Updated a record");
 
-						tempBin = tempBin.next;
+						// Indicating that the record has been updated
+						updatedRecord = true;
 
 					}
+
+					tempRec = tempRec.next;
+
+				}
+
+				// If the record was not updated
+				if (updatedRecord == false) {
+
+					System.out.println("4");
+
+					// Creating a new record
+					TyreOnShelfRecord adding = new TyreOnShelfRecord();
+
+					adding.setBin_number(shelf + "-" + row + "-" + bin);
+
+					adding.product_code = product_code;
+
+					adding.setTotal(1);
+
+					Main.recordTail.next = adding;
+
+					Main.recordTail = adding;
+
+					System.out.println("Created a new record");
+
+					updatedRecord = true;
 
 				}
 
 			}
+
+			return 0;
 
 		} else {
 
 			System.out.println("You do not have the permission to do that.");
 
 		}
+
+		return -1;
 
 	}
 
@@ -369,16 +374,17 @@ public class Operations {
 
 			TyreOnShelfRecord temp = Main.recordHead;
 
-			searchBin(Main.binHead, bin).length_left = searchBin(Main.binHead, bin).length_left
-					+ searchTyreCode(Main.tyreHead, product_code).width * number;
+			Bin binObj = searchBin(Main.binHead, bin);
 
-			searchTyreCode(Main.tyreHead, product_code).total = searchTyreCode(Main.tyreHead, product_code).total
-					- number;
-			
-			
+			Tyre tyreObj = searchTyreCode(Main.tyreHead, product_code);
+
+			binObj.length_left = binObj.length_left + tyreObj.width * number;
+
+			tyreObj.total = tyreObj.total - number;
+
 			while (temp != null) {
 
-				if (temp.getBin_number().equals(bin)) {
+				if (temp.getBin_number().equals(bin) && temp.product_code.equals(product_code)) {
 
 					temp.setTotal(temp.getTotal() - number);
 
@@ -516,17 +522,17 @@ public class Operations {
 				}
 
 			}
-		} else if(Main.permission.equals("admin")){
-			
+		} else if (Main.permission.equals("admin")) {
+
 			System.out.println("Please enter the new password");
 
 			String newPass = keyboard.nextLine();
-			
+
 			temp.password = Hash.getHash(newPass);
-			
+
 			System.out.println("Password for " + username + " updated.");
-			
-		}else {
+
+		} else {
 
 			System.out.println("You do not have the permission to do that, please contact an admin.");
 
@@ -534,7 +540,8 @@ public class Operations {
 
 	}
 
-	public static void addNewAccount(String username, String password, String permission, String email) throws NoSuchAlgorithmException {
+	public static void addNewAccount(String username, String password, String permission, String email)
+			throws NoSuchAlgorithmException {
 
 		if (Main.permission.equals("admin")) {
 
@@ -547,9 +554,9 @@ public class Operations {
 			adding.permission = permission;
 
 			adding.setEmail(email);
-			
+
 			Main.accountTail.next = adding;
-			
+
 			Main.accountTail = adding;
 
 			System.out.println("Account added");
@@ -575,9 +582,9 @@ public class Operations {
 				if (username.equals(temp.username)) {
 
 					temp.setEmail(email);
-					
+
 					System.out.println("Email for " + username + " updated.");
-					
+
 					break;
 
 				} else {
@@ -594,38 +601,38 @@ public class Operations {
 		}
 
 	}
-	
+
 	public static int countAllTyres(Tyre n) {
 
 		if (n != null) {
 
-			Main.tyreCount = Main.tyreCount+1;
+			Main.tyreCount = Main.tyreCount + 1;
 
 			countAllTyres(n.left);
 			countAllTyres(n.right);
 
 		}
-		
+
 		return Main.tyreCount;
 
 	}
-	
+
 	public static void addNewTyre(String product_code, String product_name, int total, int width, int alertValue) {
-		
-		Tyre add = new Tyre(product_code,product_name,total,width,alertValue);
-		
+
+		Tyre add = new Tyre(product_code, product_name, total, width, alertValue);
+
 		BinarySearchTree.addTyre(Main.tyreHead, add);
-		
+
 	}
-	
+
 	public static int countAccounts(Account head) {
-		
+
 		int i = 0;
 
 		// Running through the entire linked list
 		while (true) {
-			
-			i = i+1;
+
+			i = i + 1;
 
 			// Checking if the node has a pointer to another node
 			if (head.next != null) {
@@ -639,11 +646,11 @@ public class Operations {
 			}
 
 		}
-		
+
 		return i;
 
 	}
-	
+
 	public static Account searchAccount(Account head, String username) {
 
 		if (head != null) {
@@ -660,6 +667,24 @@ public class Operations {
 		}
 
 		return null;
+
+	}
+
+	// Got the two methods below from the website
+	// https://www.baeldung.com/java-email-validation-regex
+
+	public static boolean patternMatches(String emailAddress, String regexPattern) {
+
+		return Pattern.compile(regexPattern).matcher(emailAddress).matches();
+
+	}
+
+	static public boolean testUsingStrictRegex(String emailAddress) {
+
+		String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+				+ "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+
+		return patternMatches(emailAddress, regexPattern);
 
 	}
 

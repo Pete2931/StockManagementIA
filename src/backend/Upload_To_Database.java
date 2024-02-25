@@ -3,7 +3,9 @@ package backend;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Upload_To_Database {
 
@@ -15,17 +17,18 @@ public class Upload_To_Database {
 		if (head != null) {
 
 			if (head.total <= head.getAlert_value()) {
-				
-				while(tempAcc != null) {
-					
-					if (tempAcc.permission.equals("admin") && tempAcc.getEmail() != null && !tempAcc.getEmail().trim().isEmpty()) {
-						
+
+				while (tempAcc != null) {
+
+					if (tempAcc.permission.equals("admin") && tempAcc.getEmail() != null
+							&& !tempAcc.getEmail().trim().isEmpty()) {
+
 						Mail.sendEmailTo(tempAcc.getEmail(), head.product_code, head.total);
-						
+
 					}
-					
+
 					tempAcc = tempAcc.next;
-					
+
 				}
 
 			}
@@ -94,11 +97,7 @@ public class Upload_To_Database {
 				System.out.println(e.getMessage());
 			}
 
-			if (head.next != null) {
-
-				uploadBins(head.next);
-
-			}
+			uploadBins(head.next);
 
 		}
 
@@ -129,15 +128,16 @@ public class Upload_To_Database {
 
 				pstmt1.execute();
 
+				System.out.println(head.id);
+				System.out.println(head.product_code);
+				System.out.println(head.getBin_number());
+				System.out.println(head.getTotal());
+
 			} catch (SQLException e) {
 				System.out.println(e.getMessage());
 			}
 
-			if (head.next != null) {
-
-				uploadTyresOnShelves(head.next);
-
-			}
+			uploadTyresOnShelves(head.next);
 
 		}
 
@@ -161,7 +161,7 @@ public class Upload_To_Database {
 				pstmt1.setString(2, head.password);
 
 				pstmt1.setString(3, head.permission);
-				
+
 				pstmt1.setString(4, head.getEmail());
 
 				pstmt1.execute();
@@ -170,15 +170,43 @@ public class Upload_To_Database {
 				System.out.println(e.getMessage());
 			}
 
-			if (head.next != null) {
+			uploadAccounts(headIn.next);
 
-				uploadAccounts(headIn.next);
+		}
+
+		System.out.println("Upload Accounts Successful");
+
+	}
+
+	public static int findId(String product_code, String bin_number) throws ClassNotFoundException, SQLException {
+
+		// Makes connection to the database using the method above
+		Connection conn = Database.connect();
+
+		// Creates an empty SQL statement ready to send to the DB
+		Statement stmt = conn.createStatement();
+
+		// Gives the statement to the DB and then stores the returned data inside the
+		// result set
+		ResultSet rs = stmt.executeQuery("SELECT * FROM tyresonshelves");
+
+		while (rs.next()) {
+
+			int id = rs.getInt("id");
+
+			String product_code_data = rs.getString("product_code");
+
+			String bin_number_data = rs.getString("bin_number");
+
+			if (product_code.equals(product_code_data) && bin_number.equals(bin_number_data)) {
+
+				return id;
 
 			}
 
 		}
 
-		System.out.println("Upload Accounts Successful");
+		return -1;
 
 	}
 

@@ -77,12 +77,24 @@ public class SearchWindow extends JFrame {
 				String product_code = textField.getText();
 				Tyre current = Operations.searchTyreCode(Main.tyreHead, product_code);
 
-				Main.currentSelection = current;
+				if (current == null) {
 
-				textField_1.setText(current.product_code);
-				textField_2.setText(current.product_name);
-				textField_3.setText(Integer.toString(current.total));
-				textField_4.setText(Integer.toString(current.width));
+					try {
+						TyreNotFound dialog = new TyreNotFound();
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					
+				} else {
+					Main.currentSelection = current;
+
+					textField_1.setText(current.product_code);
+					textField_2.setText(current.product_name);
+					textField_3.setText(Integer.toString(current.total));
+					textField_4.setText(Integer.toString(current.width));
+				}
 
 			}
 		});
@@ -161,7 +173,8 @@ public class SearchWindow extends JFrame {
 					EventQueue.invokeLater(new Runnable() {
 						public void run() {
 							try {
-								stockManagementMenu.tableTyre(Main.tyreHead, 0);
+								stockManagementMenu.trackingNum = 0;
+								stockManagementMenu.tableTyre(Main.tyreHead);
 								stockManagementMenu frame = new stockManagementMenu();
 								frame.setVisible(true);
 							} catch (Exception e) {
@@ -223,5 +236,31 @@ public class SearchWindow extends JFrame {
 		btnNewButton_2.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnNewButton_2.setBounds(509, 462, 171, 42);
 		contentPane.add(btnNewButton_2);
+		
+		JButton btnNewButton_3 = new JButton("Back");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				setVisible(false);
+				dispose();
+				
+				stockManagementMenu.table10 = new Object[Operations.countAllTyres(Main.tyreHead)][4];
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							stockManagementMenu.trackingNum = 0;
+							stockManagementMenu.tableTyre(Main.tyreHead);
+							stockManagementMenu frame = new stockManagementMenu();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				
+			}
+		});
+		btnNewButton_3.setBounds(10, 11, 89, 23);
+		contentPane.add(btnNewButton_3);
 	}
 }

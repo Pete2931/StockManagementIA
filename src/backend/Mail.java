@@ -13,10 +13,10 @@ public class Mail {
 	public static void sendEmailTo(String receiver, String Tyre, int tyresLeft) {
 
 		// Username is the gmail that you are sending the email from
-		String username = "pisittangwongsiri@gmail.com";
+		String username = "bobcompsciib@gmail.com";
 
 		// Password is the app password that is generated on the google account
-		String password = "rhtuevcktuudulbl";
+		String password = "dmyh kzki jjca xhce";
 
 		// SMTP config and port settings
 		Properties prop = new Properties();

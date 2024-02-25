@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import backend.Import_From_Database;
 import backend.Main;
 import backend.Operations;
 import backend.Upload_To_Database;
@@ -110,6 +111,8 @@ public class AddAccountWindow extends JFrame {
 				try {
 					Operations.addNewAccount(textField.getText(), textField_1.getText(), textField_2.getText(), textField_3.getText());
 					Upload_To_Database.uploadAccounts(Main.accountHead);
+					Main.accountHead = null;
+					Import_From_Database.importAccounts();
 				} catch (NoSuchAlgorithmException | ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

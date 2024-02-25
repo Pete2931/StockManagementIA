@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -48,45 +49,59 @@ public class MailAlertNumberChange extends JFrame {
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		JLabel lblNewLabel = new JLabel("What do you want to change the alert value to?");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblNewLabel.setBounds(10, 69, 416, 39);
 		contentPane.add(lblNewLabel);
-		
+
 		JButton btnNewButton = new JButton("Confirm");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				Main.currentSelection.setAlert_value(Integer.parseInt(textField.getText()));
-				
-				try {
-					backend.Upload_To_Database.uploadTyres(Main.tyreHead);
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				setVisible(false);
-				dispose();
-				
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							MailAlertSystemMenu frame = new MailAlertSystemMenu();
-							frame.setVisible(true);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+				if (Integer.parseInt(textField.getText()) >= 0) {
+					Main.currentSelection.setAlert_value(Integer.parseInt(textField.getText()));
+
+					try {
+						backend.Upload_To_Database.uploadTyres(Main.tyreHead);
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
-				});
-				
+
+					setVisible(false);
+					dispose();
+
+					EventQueue.invokeLater(new Runnable() {
+						public void run() {
+							try {
+								MailAlertSystemMenu frame = new MailAlertSystemMenu();
+								frame.setVisible(true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+				}else {
+					
+					textField.setText("");
+					
+					try {
+						InvalidAlertNumber dialog = new InvalidAlertNumber();
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+					
+				}
+
 			}
 		});
 		btnNewButton.setBounds(173, 200, 89, 23);
 		contentPane.add(btnNewButton);
-		
+
 		textField = new JTextField();
 		textField.setBounds(112, 136, 211, 20);
 		contentPane.add(textField);

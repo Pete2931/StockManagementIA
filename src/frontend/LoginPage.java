@@ -99,7 +99,7 @@ public class LoginPage extends JFrame {
 		announcement.setForeground(Color.RED);
 		announcement.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		announcement.setHorizontalAlignment(SwingConstants.CENTER);
-		announcement.setBounds(249, 498, 467, 25);
+		announcement.setBounds(32, 498, 924, 25);
 		contentPane.add(announcement);
 
 		JButton btnNewButton = new JButton("Login");
@@ -117,7 +117,7 @@ public class LoginPage extends JFrame {
 
 				while (temp != null) {
 
-					if (username.equals(temp.username)) {
+					if (username.equals(temp.username) && username.length()<=100 && password.length()<=100) {
 
 						try {
 							if (Hash.getHash(password).equals(temp.password)) {
@@ -150,7 +150,7 @@ public class LoginPage extends JFrame {
 
 							} else {
 
-								announcement.setText("The username or password might be incorrect, please try again.");
+								announcement.setText("The login information is incorrect or the text is longer than 100 characters, please try again.");
 								
 								usernameIn.setText("");
 								passwordIn.setText("");
@@ -171,7 +171,7 @@ public class LoginPage extends JFrame {
 
 				}
 				
-				announcement.setText("The username or password might be incorrect, please try again.");
+				announcement.setText("The login information is incorrect or the text is longer than 100 characters, please try again.");
 				usernameIn.setText("");
 				passwordIn.setText("");
 

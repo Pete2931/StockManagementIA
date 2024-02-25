@@ -169,5 +169,28 @@ public class MainMenu extends JFrame {
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblNewLabel_2.setBounds(652, 347, 154, 30);
 		contentPane.add(lblNewLabel_2);
+		
+		JButton btnNewButton = new JButton("Log out");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				setVisible(false);
+				dispose();
+
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							LoginPage frame = new LoginPage();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				
+			}
+		});
+		btnNewButton.setBounds(10, 11, 89, 23);
+		contentPane.add(btnNewButton);
 	}
 }

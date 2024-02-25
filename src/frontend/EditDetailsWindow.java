@@ -132,7 +132,8 @@ public class EditDetailsWindow extends JFrame {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							stockManagementMenu.tableTyre(Main.tyreHead,0);
+							stockManagementMenu.trackingNum = 0;
+							stockManagementMenu.tableTyre(Main.tyreHead);
 							stockManagementMenu frame = new stockManagementMenu();
 							frame.setVisible(true);
 						} catch (Exception e) {
@@ -146,5 +147,31 @@ public class EditDetailsWindow extends JFrame {
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnNewButton_1.setBounds(409, 447, 147, 42);
 		contentPane.add(btnNewButton_1);
+		
+		JButton btnNewButton = new JButton("Back");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				setVisible(false);
+				dispose();
+				
+				stockManagementMenu.table10 = new Object[Operations.countAllTyres(Main.tyreHead)][4];
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							stockManagementMenu.trackingNum = 0;
+							stockManagementMenu.tableTyre(Main.tyreHead);
+							stockManagementMenu frame = new stockManagementMenu();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				
+			}
+		});
+		btnNewButton.setBounds(10, 11, 89, 23);
+		contentPane.add(btnNewButton);
 	}
 }

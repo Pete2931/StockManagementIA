@@ -7,16 +7,21 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import backend.Account;
+import backend.Hash;
 import backend.Main;
 import backend.Operations;
+import backend.Upload_To_Database;
 
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+
 import java.awt.Color;
 import java.awt.event.ActionListener;
+import java.security.NoSuchAlgorithmException;
 import java.awt.event.ActionEvent;
 
 public class AccountManagementSearch extends JFrame {
@@ -132,7 +137,71 @@ public class AccountManagementSearch extends JFrame {
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				
+				Account current = Operations.searchAccount(Main.accountHead, textField_1.getText());
+
+				if (Operations.testUsingStrictRegex(textField_4.getText()) || textField_4.getText().equals("")) {
+
+					if (textField_3.getText().equals("admin") || textField_3.getText().equals("viewer")) {
+
+						current.permission = textField_3.getText();
+						current.setEmail(textField_4.getText());
+
+						if (textField_2.getText() != null && !textField_2.getText().trim().isEmpty()) {
+
+							try {
+								current.password = Hash.getHash(textField_2.getText());
+							} catch (NoSuchAlgorithmException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+
+						try {
+							Upload_To_Database.uploadAccounts(Main.accountHead);
+						} catch (ClassNotFoundException | NoSuchAlgorithmException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+						setVisible(false);
+						dispose();
+
+						AccountManagementMenuAdmin.clearTable();
+
+						EventQueue.invokeLater(new Runnable() {
+							public void run() {
+								try {
+									AccountManagementMenuAdmin frame = new AccountManagementMenuAdmin();
+									frame.setVisible(true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						});
+
+					} else {
+
+						try {
+							InvalidRole dialog = new InvalidRole();
+							dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+							dialog.setVisible(true);
+						} catch (Exception e2) {
+							e2.printStackTrace();
+						}
+						
+					}
+					
+				} else {
+
+					try {
+						InvalidEmail dialog = new InvalidEmail();
+						dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+						dialog.setVisible(true);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+
+				}
 				
 			}
 		});

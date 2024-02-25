@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import backend.Import_From_Database;
 import backend.Main;
 import backend.Operations;
 import backend.TyreOnShelfRecord;
@@ -79,12 +80,17 @@ public class NumberOfTyresTakeOut1 extends JFrame {
 				try {
 					Upload_To_Database.uploadBins(Main.binHead);
 					Upload_To_Database.uploadTyresOnShelves(Main.recordHead);
+					Main.recordHead = null;
+					Import_From_Database.importTyresOnShelves();
 					Upload_To_Database.uploadTyres(Main.tyreHead);
 				} catch (ClassNotFoundException | SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
+				AddTakeOutTyresWindow.binTotalTable = new Object[Operations
+				     					               			.searchRecordsFromProductCode(Main.recordHead, Main.currentSelection.product_code).size()][2];
+				
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {

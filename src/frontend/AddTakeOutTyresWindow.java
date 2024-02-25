@@ -42,6 +42,9 @@ public class AddTakeOutTyresWindow extends JFrame implements Runnable {
 	protected static boolean canceled = false;
 
 	public static void makeTable() {
+		
+		binTotalTable = new Object[Operations
+		               			.searchRecordsFromProductCode(Main.recordHead, Main.currentSelection.product_code).size()][2];
 
 		ArrayList<TyreOnShelfRecord> list = Operations.searchRecordsFromProductCode(Main.recordHead,
 				Main.currentSelection.product_code);
@@ -174,7 +177,8 @@ public class AddTakeOutTyresWindow extends JFrame implements Runnable {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							stockManagementMenu.tableTyre(Main.tyreHead, 0);
+							stockManagementMenu.trackingNum = 0;
+							stockManagementMenu.tableTyre(Main.tyreHead);
 							stockManagementMenu frame = new stockManagementMenu();
 							frame.setVisible(true);
 						} catch (Exception e) {
